@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const things = require('./models/thing');
+const sauceRoutes = require('./routes/sauce');
+const userRoutes = require('../routes/user');
 
 //connexion MongoDB
 mongoose.connect('mongodb+srv://nelly:WYjJoB0hxsbdJTwv@cluster0-pme76.mongodb.net/test?retryWrites=true&w=majority',
@@ -9,8 +10,6 @@ mongoose.connect('mongodb+srv://nelly:WYjJoB0hxsbdJTwv@cluster0-pme76.mongodb.ne
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
-
-
 
 //CORS middleware 
 app.use((req, res, next) => {
@@ -20,15 +19,11 @@ app.use((req, res, next) => {
    next();
  });
 
-app.use(express.json()); //intersepte tout les objet json
+//lire le contenu JSON renvoyé par les requêtes POST
+app.use(express.json()); 
 
-app.post("/api/auth/signup", (req, res) =>{
-   console.log("connexion :", req.body);
-   res.send({message: "Connexion de l'utilisateur"});
-});
-app.post("/api/auth/login");
-
-
+app.use('/api/sauces', sauceRoutes);
+app.use('/api/auth', userRoutes);
 module.exports = app;
 
 
