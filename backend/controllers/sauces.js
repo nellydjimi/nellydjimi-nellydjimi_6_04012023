@@ -1,55 +1,66 @@
 const modelsSauces = require('../models/sauces');
+const fs = require('fs');
 
-
-exports.createSauces('/', (req, res, next) => {
-    const saucesObject = JSON.parse(req.body.thing);
-    delete saucesObject._id;
-    const sauces = new modelsSauces({
-        ...saucesObject,
-        imageUrl : ;
-        likes : ;
-        dislikes : ;
-        usersLiked : ;
-        usersDisliked : ;
-    })
-    sauces.save()
-    .then(() => { res.status(201).json({message: 'Votre sauce est enregistré !'})})
-   .catch(error => { res.status(400).json( { error })})
-  });
-  
-  exports.getIdSauces('/:id', (req, res, next) => {
-    Thing.findOne({
-      _id: req.params.id
-    }).then(
-      (thing) => {
-        res.status(200).json(thing);
-      }
-    ).catch(
-      (error) => {
-        res.status(404).json({
-          error: error
-        });
-      }
-    );
-  });
-  
-  exports.imgUrlSauces('/', (req, res, next) => {
+//renvoie tableau de toutes les sauces
+exports.createSauces=('/', (req, res, next) => {
     
   });
+
+//renvoie la sauce avec l'id fourni
+  exports.getIdSauces=('/:id', (req, res, next) => {
+    modelsSauces.findOne({_id: req.params.id})
+    .then(sauces => res.status(200).json(sauces))
+    .catch(error => res.status(400).json({error}));  
+    console.log('Votre sauce a été récupérée'); 
+  });
   
-  exports.updateSauces('/:id', (req, res, next) => {
+//capture et enregistre l'image, analyse la sauce
+  exports.imgUrlSauces=('/', (req, res, next) => {
+    const saucesObject = JSON.parse(req.body.sauce);
+    delete saucesObject._id;
+    const sauces = new ModelsSauces({
+        ...saucesObject,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        likes: 0,
+        dislikes:0,
+        usersLiked: [' '],
+        usersDisliked: [' ']
+    });
+    sauces.save()
+    .then(() => res.status(201).json({message: "Sauce ajoutée"}))
+    .catch(error => res.status(400).json({error}));
+    console.log('Sauce initialisée');
+  });
+  
+  //maj de la sauce
+  exports.updateSauces=('/:id', (req, res, next) => {
     Thing.deleteOne({_id: req.params.id}).then(
    
     );
   });
   
-  exports.deleteSauces('/:id', (req, res, next) => {
-    Thing.find().then(
-     
-    );
+//supprime la sauce avec l'id fourni
+  exports.deleteSauces=('/:id', (req, res, next) => {
+    modelsSauces.findOne({ _id: req.params.id})
+    .then(sauces => {
+        if (modelsSauces.userId != req.auth.userId) {
+            res.status(401).json({message: 'Erreur'});
+        } else {
+            const filename = sauces.imageUrl.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                modelsSauces.deleteOne({_id: req.params.id})
+                    .then(() => { res.status(200).json({message: 'Votre sauce a été supprimé !'})})
+                    .catch(error => res.status(401).json({ error }));
+            });
+        }
+    })
+    .catch( error => {
+        res.status(500).json({ error });
+    });
   });
 
-  exports.likeSauces('/:id/like', (req, res, next) => {
+//defini le statut like avec l'userId
+  exports.likeSauces=('/:id/like', (req, res, next) => {
     Thing.find().then(
      
     );
