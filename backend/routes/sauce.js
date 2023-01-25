@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
 const auth = require('../middleware/auth');
-const multer = require('../middleware/multer_config')
+const multer = require('../middleware/multer_config');
 const controllersSauces = require('../controllers/sauces');
 
 
@@ -16,7 +15,7 @@ router.get('/:id', auth, controllersSauces.getIdSauces)
 router.post('/', auth, multer, controllersSauces.imgUrlSauces)
 
 //maj de la sauce
-router.put('/:id', auth, controllersSauces.updateSauces)
+router.put('/:id', auth, multer, controllersSauces.updateSauces)
 
 //supprime la sauce avec l'id fourni
 router.delete('/:id', auth, controllersSauces.deleteSauces)
