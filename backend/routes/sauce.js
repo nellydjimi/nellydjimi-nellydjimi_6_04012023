@@ -6,13 +6,13 @@ const controllersSauces = require('../controllers/sauces');
 
 
 //renvoie tableau de toutes les sauces
-router.get('/',auth , controllersSauces.createSauces)
+router.get('/',auth , controllersSauces.getSauces)
 
 //renvoie la sauce avec l'id fourni
-router.get('/:id', auth, controllersSauces.getIdSauces)
+router.get('/:id', auth, controllersSauces.getOneSauce)
 
 //capture et enregistre l'image, analyse la sauce
-router.post('/', auth, multer, controllersSauces.imgUrlSauces)
+router.post('/', auth, multer, controllersSauces.createSauces)
 
 //maj de la sauce
 router.put('/:id', auth, multer, controllersSauces.updateSauces)
